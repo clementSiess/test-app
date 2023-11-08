@@ -1,0 +1,33 @@
+.box {
+  height: 65px;
+  width: 466px;
+}
+
+.box .group {
+  height: 65px;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 468px;
+}
+
+.box .overlap-group {
+  background-color: #d9d9d9;
+  height: 65px;
+  position: relative;
+  width: 466px;
+}
+
+.box .text-wrapper {
+  color: #000000;
+  font-family: "Istok Web", Helvetica;
+  font-size: 40px;
+  font-weight: 400;
+  left: 79px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: 6px;
+  width: 308px;
+}

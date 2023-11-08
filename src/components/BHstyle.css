@@ -1,0 +1,19 @@
+.group {
+  height: 72px;
+  position: relative;
+  width: 198px;
+}
+
+.group .text-wrapper {
+  color: #000000;
+  font-family: "Istok Web", Helvetica;
+  font-size: 36px;
+  font-weight: 400;
+  left: 0;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  text-align: center;
+  top: -1px;
+  width: 198px;
+}

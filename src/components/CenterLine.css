@@ -1,0 +1,14 @@
+.page-container {
+  position: relative;
+  height: 100vh; /* Adjust the height as needed */
+}
+
+.vertical-line {
+  position: absolute;
+  left: 50%; /* Center the line horizontally */
+  top: 0;
+  bottom: 0;
+  width: 2px; /* Thickness of the line */
+  background-color: #000; /* Color of the line */
+  transform: translateX(-50%); /* Ensure it's centered precisely */
+}
