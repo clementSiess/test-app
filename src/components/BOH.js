@@ -7,6 +7,7 @@ import {Col, Container, Row, Stack} from "react-bootstrap";
 
 function BOH  () {
   const holdEventsEndpoint = 'http://localhost:8080/hold-events?locationNumber=01437';
+  const saveHoldEventEndpoint = 'http://localhost:8080/hold-event/save';
 
 
   const items = [
@@ -18,8 +19,10 @@ function BOH  () {
 
   const [events, setEvents] = useState([]);
   const fetchEvents = () => {
+    console.log("FetchEvent")
     fetch(holdEventsEndpoint)
         .then((response) => response.json())
+        //.then((data) => console.log(data.toString()))
         .then((data) => setEvents(data))
         .catch((error) => console.error('Error fetching events:', error));
   };
@@ -38,9 +41,11 @@ function BOH  () {
 
   const [messages, setMessages] = useState([]);
   const [selectedButton, setSelectedButton] = useState(null);
-  const [proteinSelected, setProteinSelected] = useState(false);
+  //const [proteinSelected, setProteinSelected] = useState(false);
   const [selectedProtein, setSelectedProtein] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [lastButtonSelectionTime, setLastButtonSelectionTime] = useState(null);
+  const getCurrentTimeInSeconds = () => Math.floor(new Date().getTime() / 1000);
 
   const fetchMessages = () => {
     fetch('http://localhost:8080/messages')
@@ -73,12 +78,36 @@ function BOH  () {
   };
 
   const handleButtonClick = (seconds) => {
-    if (seconds === null && proteinSelected) {
-      // Call the external API with the selected protein and time in seconds
-      // Replace this with your actual API call code
-      console.log(`Calling API with Protein: ${selectedProtein} and ${seconds} seconds`);
+    if (seconds != null && setSelectedProtein != null) {
+      const requestBody = {
+        locationNumber: '01437',
+        proteinType: selectedProtein,
+        createdTime: getCurrentTime().toISOString(),
+        secToBeReady: seconds,
+        epochCreatedTime: Math.floor(getCurrentTime().getTime() / 1000),
+      };
+      console.log(requestBody)
+      fetch(saveHoldEventEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      })
+          .then((response) => {
+            if (response.ok) {
+              console.log('Data saved successfully.');
+            } else {
+              console.error('Failed to save data.');
+            }
+          })
+          .catch((error) => {
+            console.error('Error saving data:', error);
+          });
     }
+
     setSelectedButton(seconds);
+    setLastButtonSelectionTime(getCurrentTime());
   };
 
   return (
@@ -88,8 +117,8 @@ function BOH  () {
               <Col md={6}>
                 {/* Left Column */}
                 <div className="column" style={{ backgroundColor: 'lightgrey', height: '100%', width: '100%' }}>
-                  <div className="center-row" style={{ backgroundColor: 'lightgreen', height: '10%', width: '100%' }}>
-                    <h2>Creat A Hold</h2>
+                  <div className="center-row" style={{ backgroundColor: '#6c757d', height: '10%', width: '100%' }}>
+                    <h2>Create A Hold</h2>
                   </div>
                   <Row className="center-row" style={{ width: '100%', height: '45%', borderBottom: '2px solid red', marginBottom: '10px' }}>
                     <Col md={2}>
@@ -187,21 +216,29 @@ function BOH  () {
                       <h5>CURRENT HOLDS</h5>
                       <div>
                         <h1>Events</h1>
+                        {events.length}
                         {events.length > 0 && (
                             <ul>
-                              {events.map((event, index) => (
-                                  <li key={event.id}>
-                                    <div style={{ color: items.find((item) => item.text === event.proteinType)?.color }}>
-                                      {event.proteinType}
-                                    </div>
-                                    <div>
-                                      Timer: {Math.max(0, Math.floor((new Date(event.createdTime).getTime() + event.secToBeReady * 1000 - getCurrentTime().getTime()) / 1000))} seconds
-                                    </div>
-                                  </li>
-                              ))}
+                              {events.map((event, index) => {
+                                const currentTimeInSeconds = getCurrentTimeInSeconds();
+                                //const eventTimeInSeconds = event.createdTime + event.secToBeReady;
+                                const remainingTimeInSeconds = Math.max(0, event.createdTime + event.secToBeReady - currentTimeInSeconds);
+
+                                return (
+                                    <li key={event.id}>
+                                      <div style={{ color: items.find((item) => item.text === event.proteinType)?.color }}>
+                                        {event.proteinType}
+                                      </div>
+                                      <div>
+                                        Timer: {remainingTimeInSeconds} seconds
+                                      </div>
+                                    </li>
+                                );
+                              })}
                             </ul>
                         )}
                       </div>
+
                     </div>
                   </Col>
                 </Row>
