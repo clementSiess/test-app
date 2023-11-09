@@ -1,16 +1,10 @@
+/*
 .FOH-view {
   background-color: #ffffff;
   display: flex;
   flex-direction: row;
   justify-content: center;
   width: 100%;
-}
-
-.FOH-view .div {
-  background-color: #ffffff;
-  height: 1080px;
-  position: relative;
-  width: 1920px;
 }
 
 .FOH-view .line {
@@ -530,3 +524,4 @@
   top: 0;
   width: 360px;
 }
+*/

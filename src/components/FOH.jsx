@@ -1,91 +1,97 @@
 import React from "react";
 import "./style.css";
 import MessageButton from './MessageButton';
+import {Col, Container, Row} from "react-bootstrap";
 
 function FohView  ()  {
+  const saveMessageEndpoint = 'http://localhost:8080/message/save';
+  const buttonsMessage = [
+    'Full lobby',
+    'Full DT',
+    'Bus',
+    'Waiting on...',
+    'TYPE YOUR MESSAGE HERE...',
+  ];
+  const handleSaveMessageButtonClick = (messageText) => {
+    const requestBody = {
+      locationNumber: '01437',
+      createdTime: new Date().toISOString(),
+      messageTxt: messageText,
+    };
+
+    fetch(saveMessageEndpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+    })
+        .then((response) => {
+          if (response.ok) {
+            console.log('Message sent successfully.');
+          } else {
+            console.error('Failed to send the message.');
+          }
+        })
+        .catch((error) => {
+          console.error('Error sending the message:', error);
+        });
+  };
+
   return (
-    <div className="FOH-view">
-      <div className="div">
-        <img className="line" alt="Line" src="/img/line-1.png" />
-        <img className="img" alt="Line" src="/img/line-2.svg" />
-        <div className="group">
-          <div className="overlap-group">
-            <div className="text-wrapper">Current Holds</div>
-          </div>
-        </div>
-        <div className="overlap-wrapper">
-          <div className="overlap">
-            <div className="rectangle" />
-            <div className="text-wrapper-2">Communication</div>
-          </div>
-        </div>
-        <div className="overlap-2">
-         
-          <div className="text-wrapper-3">
-          <MessageButton  text="Bus"/>
-          </div>
-        </div>
-        <div className="overlap-group-wrapper">
-          <div className="overlap-3">
-            <div className="rectangle-2" />
-            <div className="text-wrapper-4">Waiting on...</div>
-          </div>
-        </div>
-        <div className="timers">
-          <div className="overlap-4">
-            <div className="rectangle-3" />
-            <img className="element-timer-icon" alt="Element timer icon" src="1minTimerIcon.png" />
-            <img className="element-min-timer-icon" alt="Element timer icon" src="2minTimerIcon.svg.png" />
-            <img className="element-timer-icon-2" alt="Element timer icon" src="5minTimerIcon.svg.png" />
-            <img className="longer-timer-icon" alt="Longer timer icon" src="LongerTimerIcon.svg.png" />
-            <img className="ready-timer-icon" alt="Ready timer icon" src="ReadyTimerIcon.png" />
-            <div className="text-wrapper-5">8 min</div>
-            <div className="text-wrapper-6">5 min</div>
-            <div className="text-wrapper-7">2 min</div>
-            <div className="text-wrapper-8">1 min</div>
-          </div>
-        </div>
-        <img className="chat-icon" alt="Chat icon" src="ChatIcon.png" />
-        <div className="overlap-5">
-          <div className="group-3">
-            <img className="chat-icon-2" alt="Chat icon" src="ChatIcon.png" />
-            <div className="text-wrapper-9">Sent to BOH</div>
-          </div>
-          <div className="div-wrapper">
-            <div className="overlap-6">
-              <div className="text-wrapper-10">Waiting on Strips</div>
-            </div>
-          </div>
-        </div>
-        <p className="p">Send A MESSAGE TO BOH</p>
-        <div className="group-4">
-          
-            <div className="text-wrapper-11">
-            <MessageButton text='Full Lobby'/>
-            </div>
-        
-        </div>
-        <div className="group-5">
-          
-            
-            <div className="text-wrapper-12">
-            <MessageButton text='Full DT' />
-            </div>
-        
-        </div>
-        <div className="group-6">
-          <div className="overlap-9">
-            <div className="text-wrapper-13">TYPE YOUR MESSAGE HERE...</div>
-          </div>
-        </div>
-        <div className="overlap-10">
-          <div className="ellipse" />
-          <div className="group-7">
-            <div className="text-wrapper-14">Spicy Fillet</div>
-          </div>
-        </div>
+      <div className="FOH-view centered-container" style={{ width: '100%', height: '100vh' }}>
+        <Container className="custom-container" style={{ width: '100%', height: '100%' }}>
+          <Row className="center-row" style={{ width: '100%', height: '100%' }}>
+            <Col md={6}>
+              {/* Left Column */}
+              <div className="column" style={{ backgroundColor: 'lightblue', height: '100%', width: '100%' }}>
+                <div className="center-row" style={{ backgroundColor: 'lightgreen', height: '10%', width: '100%' }}>
+                  <h2>Create A Hold</h2>
+                </div>
+                <div className="column" style={{ backgroundColor: 'lightgreen', height: '100%', width: '20%', border: '0px'}}>
+                </div>
+              </div>
+            </Col>
+            <Col md={6} >
+              <div className="column" style={{ backgroundColor: 'lightgrey', height: '100%', width: '100%' }}>
+                <div className="center-row" style={{ backgroundColor: 'lightgreen', height: '10%', width: '100%' }}>
+                  <h2>Communication</h2>
+                </div>
+                <Row className="center-row" style={{ width: '100%', height: '35%', borderBottom: '2px solid red', marginBottom: '10px'}}>
+                  <Col md={2}>
+                    <div style={{ backgroundColor: 'lightgrey', height: '100%', width: '100%' }}>
+                      <img src="ChatIcon.png" alt="Chat Icon" style={{ maxWidth: '130%', height: 'auto' }}  />
+                    </div>
+                  </Col>
+                  <Col>
+                    <h5>MESSAGES FROM FOH</h5>
+
+                  </Col>
+                </Row>
+                <Row className="center-row" style={{ width: '100%', height: '55%' }}>
+                  <Col md={2}>
+                    <div style={{ backgroundColor: 'lightgrey', height: '100%', width: '100%' }}>
+                      <img src="ChatIcon.png" alt="Chat Icon" style={{ maxWidth: '130%', height: 'auto' }}  />
+                    </div>
+                  </Col>
+                  <Col>
+                    <div style={{ backgroundColor: 'lightgrey', height: '100%', width: '100%' }}>
+                      <h5>SEND A MESSAGE TO BOH</h5>
+                      <div>
+                        {buttonsMessage.map((text, index) => (
+                            <button key={index} className={`btn btn-secondary mb-2`} style={{ backgroundColor: 'lightcoral' }} onClick={() => handleSaveMessageButtonClick(text)}>
+                              {text}
+                            </button>
+                        ))}
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+              </div>
+            </Col>
+          </Row>
+        </Container>
       </div>
-    </div>
   );
 };
 

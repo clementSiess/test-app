@@ -2,6 +2,63 @@
   text-align: center;
 }
 
+.item-list {
+  list-style: none;
+  padding: 0;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin: 10px;
+  transition: background-color 0.3s;
+}
+
+.circle {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.selected {
+  background-color: gainsboro;
+}
+
+
+.centered-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: lightgray;
+}
+
+.custom-container {
+  border-radius: 20px; /* Adjust the value for the level of beveling */
+}
+
+.center-row {
+  display: flex;
+  justify-content: center;
+}
+
+.column {
+  background-color: white;
+  border-radius: 20px; /* Adjust the value for the level of beveling */
+  padding: 20px;
+  text-align: center;
+}
+
+.sub-column {
+  background-color: white;
+  border-radius: 20px; /* Adjust the value for the level of beveling */
+  padding: 20px;
+  text-align: center;
+  margin: 10px;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
