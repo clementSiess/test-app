@@ -60,7 +60,7 @@ function BOH  () {
 
   const fetchMessagesPeriodically = () => {
     fetchMessages();
-    setInterval(fetchMessages, 5000000); // 5,000 milliseconds = 5 seconds
+    setInterval(fetchMessages, 5000); // 5,000 milliseconds = 5 seconds
   };
 
   const buttonLabels = [
@@ -110,6 +110,14 @@ function BOH  () {
     setLastButtonSelectionTime(getCurrentTime());
   };
 
+  const formatTime = (seconds) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
   return (
       <div className="BOH-view centered-container" style={{ width: '100%', height: '100vh' }}>
           <Container className="custom-container" style={{ width: '100%', height: '100%' }}>
@@ -117,7 +125,7 @@ function BOH  () {
               <Col md={6}>
                 {/* Left Column */}
                 <div className="column" style={{ backgroundColor: 'lightgrey', height: '100%', width: '100%' }}>
-                  <div className="center-row" style={{ backgroundColor: '#6c757d', height: '10%', width: '100%' }}>
+                  <div className="center-row" style={{ backgroundColor: 'gainsboro', height: '10%', width: '100%' }}>
                     <h2>Create A Hold</h2>
                   </div>
                   <Row className="center-row" style={{ width: '100%', height: '45%', borderBottom: '2px solid red', marginBottom: '10px' }}>
@@ -146,7 +154,7 @@ function BOH  () {
                   </Row>
                   <Row className="center-row" style={{ width: '100%', height: '45%' }}>
                     <Col>
-                      <h5>Time to Ready</h5>
+                      <h5>TIME TO READY</h5>
                       <div className="row">
                         <div className="col-md-6">
                           <div className="btn-group-vertical">
@@ -179,9 +187,9 @@ function BOH  () {
                   </Row>
                 </div>
               </Col>
-              <Col md={6} >
+              <Col md={6} style={{borderLeft: '2px solid red'}}>
                 <div className="column" style={{ backgroundColor: 'lightgrey', height: '100%', width: '100%' }}>
-                  <div className="center-row" style={{ backgroundColor: 'lightgreen', height: '10%', width: '100%' }}>
+                  <div className="center-row" style={{ backgroundColor: 'gainsboro', height: '10%', width: '100%' }}>
                     <h2>Communication</h2>
                   </div>
                   <Row className="center-row" style={{ width: '100%', height: '35%', borderBottom: '2px solid red', marginBottom: '10px'}}>
@@ -214,29 +222,26 @@ function BOH  () {
                   <Col>
                     <div style={{ backgroundColor: 'lightgrey', height: '100%', width: '100%' }}>
                       <h5>CURRENT HOLDS</h5>
-                      <div>
-                        <h1>Events</h1>
-                        {events.length}
-                        {events.length > 0 && (
-                            <ul>
-                              {events.map((event, index) => {
-                                const currentTimeInSeconds = getCurrentTimeInSeconds();
-                                //const eventTimeInSeconds = event.createdTime + event.secToBeReady;
-                                const remainingTimeInSeconds = Math.max(0, event.createdTime + event.secToBeReady - currentTimeInSeconds);
+                      <div style={{ backgroundColor: 'lightgrey', height: '100%', width: '90%' }}>
+                        <div>
+                          <ul>
+                            {events.map((event, index) => {
+                              const eventTime = new Date(event.createdTime); // Convert ISO string to Date
+                              const currentTime = new Date();
+                              const timeLeftInSeconds = (eventTime - currentTime) / 1000 + event.secToBeReady;
 
-                                return (
-                                    <li key={event.id}>
-                                      <div style={{ color: items.find((item) => item.text === event.proteinType)?.color }}>
-                                        {event.proteinType}
-                                      </div>
-                                      <div>
-                                        Timer: {remainingTimeInSeconds} seconds
-                                      </div>
-                                    </li>
-                                );
-                              })}
-                            </ul>
-                        )}
+                              return (
+                                  <li
+                                      key={index}
+                                      className="btn btn-secondary mb-2"
+                                      style={{ backgroundColor: 'lightcoral' }}
+                                  >
+                                    {event.proteinType} - Time Left: {formatTime(Math.max(0, timeLeftInSeconds))}
+                                  </li>
+                              );
+                            })}
+                          </ul>
+                        </div>
                       </div>
 
                     </div>

@@ -19,7 +19,7 @@ function FohView  ()  {
     fetchMessages(); // Initial fetch
 
     // Fetch messages every 10 seconds (adjust the interval as needed)
-    const interval = setInterval(fetchMessages, 10000);
+    const interval = setInterval(fetchMessages, 5000);
 
     return () => {
       clearInterval(interval); // Cleanup the interval when the component unmounts
@@ -84,6 +84,15 @@ function FohView  ()  {
         });
   };
 
+  // Function to format seconds as HH:MM:SS
+  const formatTime = (seconds) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
   return (
       <div className="FOH-view centered-container" style={{ width: '100%', height: '100vh' }}>
         <Container className="custom-container" style={{ width: '100%', height: '100%' }}>
@@ -94,39 +103,95 @@ function FohView  ()  {
                 <div className="center-row" style={{ backgroundColor: 'gainsboro', height: '10%', width: '100%' }}>
                   <h2>Current Holds</h2>
                 </div>
-                <Row className="center-row" style={{ width: '100%', height: '100%', borderBottom: '2px solid red', marginBottom: '10px' }}>
-                  <Col md={2}>
-                    <div style={{ backgroundColor: 'lightgrey', height: '100%', width: '100%' }}>
+                <Row className="center-row" style={{ width: '100%', height: '100%', marginBottom: '10px' }}>
+                  <Col md={1} >
+                    {/*<div style={{ backgroundColor: 'lightgrey', height: '100%', width: '100%' }}>
                       <img src="ReadyTimerIcon.png" alt="Ready Timer" style={{ maxWidth: '130%', height: 'auto' }}  />
-                    </div>
+                    </div>*/}
                   </Col>
-                  <Col md={10}>
+                  <Col md={11}>
                     <div style={{ backgroundColor: 'lightgrey', height: '100%', width: '90%' }}>
                       <div>
                         <ul>
-                          {events.map((event) => {
-                            const currentTimeInSeconds = Math.floor(new Date().getTime() / 1000);
-                            const eventTimeInSeconds = event.createdTime + event.secToBeReady;
-                            const secondsLeft = eventTimeInSeconds - currentTimeInSeconds;
+                          {events.map((event, index) => {
+                            const eventText = event.proteinType; // Assuming the event text is in 'proteinType'
+                            const eventTime = new Date(event.createdTime); // Convert ISO string to Date
+                            const currentTime = new Date();
+                            const timeLeftInSeconds = Math.floor((eventTime - currentTime) / 1000);
 
-                            // Only display events that are in the future
-                            if (secondsLeft > 0) {
+                            const matchingItem = items.find((item) => item.text === eventText);
+                            const color = matchingItem ? matchingItem.color : 'gray';
+                            console.log("eventText: " + eventText)
+                            console.log("timeLeftInSeconds: " + timeLeftInSeconds)
+                            console.log("color: " + color)
+                            if (timeLeftInSeconds === 0 || timeLeftInSeconds < 0) { //TODO remove || timeLeftInSeconds < 0
+
                               return (
-                                  <li key={event.id}>
-                                    Event ID: {event.id}, Time Left: {secondsLeft} seconds
-                                  </li>
+                                  <ul className="item-list">
+                                    <li key={index} className={`item`} style={{height: '100%'}}>
+                                      <div style={{backgroundColor: 'lightgrey', height: '100%', width: '20%'}}>
+                                        <img src="ReadyTimerIcon.png" alt="Ready Timer"
+                                             style={{maxWidth: '130%', height: 'auto'}}/>
+                                      </div>
+                                      <div style={{backgroundColor: 'lightgrey', width: '80%', height: 'auto'}}>
+{/*
+                                        <div className="circle" style={{backgroundColor: color}}></div>
+*/}
+                                        <h5>{event.proteinType} - Time
+                                          Left: {formatTime(Math.max(0, timeLeftInSeconds))}</h5>
+                                      </div>
+                                    </li>
+                                  </ul>
                               );
+                            } else if (timeLeftInSeconds >= 30 && timeLeftInSeconds < 60) {
+                              return (
+                                  <ul className="item-list">
+                                    <li key={index} className={`item`} style={{height: '100%'}}>
+                                      <div style={{backgroundColor: 'lightgrey', height: '100%', width: '20%'}}>
+                                        <img src="1minTimerIcon.png" alt="Ready Timer"
+                                             style={{maxWidth: '130%', height: 'auto'}}/>
+                                      </div>
+                                      <div style={{backgroundColor: 'lightgrey', width: '80%', height: 'auto'}}>
+{/*
+                                        <div className="circle" style={{backgroundColor: color}}></div>
+*/}
+                                        <h5>{event.proteinType} - Time
+                                          Left: {formatTime(Math.max(0, timeLeftInSeconds))}</h5>
+                                      </div>
+                                    </li>
+                                  </ul>
+                              );
+                            } else if (timeLeftInSeconds > 60) {
+                              return (
+                                  <ul className="item-list">
+                                    <li key={index} className={`item`} style={{height: '100%'}}>
+                                      <div style={{backgroundColor: 'lightgrey', height: '100%', width: '20%'}}>
+                                        <img src="2minTimerIcon.png" alt="Ready Timer"
+                                             style={{maxWidth: '130%', height: 'auto'}}/>
+                                      </div>
+                                      <div style={{backgroundColor: 'lightgrey', width: '80%', height: 'auto'}}>
+{/*
+                                        <div className="circle" style={{backgroundColor: color}}></div>
+*/}
+                                        <h5>{event.proteinType} - Time
+                                          Left: {formatTime(Math.max(0, timeLeftInSeconds))}</h5>
+                                      </div>
+                                    </li>
+                                  </ul>
+                              );
+                            } else {
+                              return null; // Hide the element if time left is not greater than 0
                             }
-                            return null; // If the event is in the past, don't display it
                           })}
                         </ul>
+
                       </div>
                     </div>
                   </Col>
                 </Row>
               </div>
             </Col>
-            <Col md={6} >
+            <Col md={6} style={{borderLeft: '2px solid red'}}>
               <div className="column" style={{ backgroundColor: 'lightgrey', height: '100%', width: '100%' }}>
                 <div className="center-row" style={{ backgroundColor: 'gainsboro', height: '10%', width: '100%' }}>
                   <h2>Communication</h2>
